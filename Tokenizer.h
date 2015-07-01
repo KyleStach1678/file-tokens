@@ -32,7 +32,9 @@ class Tokenizer{
 		void setMode(int mode);
 		string getString();
 		int countTokens();
+		int getCurrentMode();
 		bool hasMoreTokens();
+		string currToken();
 		string nextToken();
 		string prevToken();
 		vector<string> split();

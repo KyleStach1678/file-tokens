@@ -19,7 +19,7 @@ Tokenizer::Tokenizer(){
 	inpString="";
 	Token="";
 	strDelim="";
-	currPos=inpString.begin()-1;
+	currPos=inpString.begin();
 }
 
 Tokenizer::Tokenizer(const string& str, const string& delm){
@@ -27,7 +27,7 @@ Tokenizer::Tokenizer(const string& str, const string& delm){
 	inpString=str;
 	Token="";
 	strDelim=delm;
-	currPos=inpString.begin()-1;
+	currPos=inpString.begin();
 }
 
 Tokenizer::Tokenizer(vector<string>& strList, const string& str, const string& delm){
@@ -36,7 +36,7 @@ Tokenizer::Tokenizer(vector<string>& strList, const string& str, const string& d
 	Token="";
 	strDelim=delm;
 	strList= this->split();
-	currPos=inpString.begin()-1;
+	currPos=inpString.begin();
 }
 
 Tokenizer::~Tokenizer(){}
@@ -100,11 +100,16 @@ bool Tokenizer::hasMoreTokens(){
 	return true;
 }
 
+string Tokenizer::currToken(){
+
+	return this->Token;
+}
+
 string Tokenizer::nextToken(){
 
 	if(!mode)
 	{
-		if(this->inpString.size()<=0) return "";
+		if(this->inpString.length()<=0) return "";
 		
 		this->Token="";
 	    this->skipDelimiters_forward(); 
@@ -206,5 +211,8 @@ void Tokenizer::skipDelimiters_backward()
 {
     while(currPos != this->inpString.begin() && isDelimiter(*currPos))
         --currPos;
+}
+int Tokenizer::getCurrentMode() {
+	return mode;
 }
 
