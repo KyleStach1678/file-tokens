@@ -4,8 +4,6 @@
 int main() {
 	FileManager fr("test.txt", ",");
 	fr.setMode(MODE_READ);
-	fr.setLineIndex(2);
-	cout << fr.nextLine() << endl;
-
+	cout << fr.getLineAtIndex(3)<< endl;
+	cout <<fr.getLineAtIndex(1) << endl;
 	}
-	

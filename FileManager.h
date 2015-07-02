@@ -20,6 +20,8 @@ public:
 	~FileManager();
 	
 	 int countLines();
+
+	 //Lines are 1-indexed
 	 int getCurrentLineIndex();
 
 	string nextLine();
@@ -27,6 +29,8 @@ public:
 	string currentLine();
 	string previousToken();
 	string currentToken();
+	string getLineAtIndex(int index);
+	string getPreviousLine();
 
 	void setCurrentTokenPosition(int pos);
 
@@ -59,6 +63,8 @@ private:
 	fstream file;
 
 	Tokenizer tokenizer;
+
+	string getFirstLine();
 
 	string currentln = "";
 	string filename;

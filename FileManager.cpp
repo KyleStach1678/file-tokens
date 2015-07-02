@@ -138,6 +138,7 @@ void FileManager::appendTokens(vector<string> tokens) {
 void FileManager::newLine() {
 	append("\n");
 	tokensOnLine = 0;
+	currentLineIndex++;
 }
 
 void FileManager::erase() {
@@ -169,18 +170,19 @@ bool FileManager::endOfFile() {
 	return file.eof();
 }
 void FileManager::setLineIndex(int index) {
-	currentLineIndex = index;
 	file.clear();
 	file.close();
 	file.open(filename, ios::out | ios::in | ios::app);
 	int lineCounter = 1;
 	while(hasMoreLines()) {
 		nextLine();
+		lineCounter++;
 		if (lineCounter == index) {
 			break;
 		}
-		lineCounter++;
+		
 	}
+	currentLineIndex = index;
 
 }
 void FileManager::setCurrentTokenPosition(int pos) {
@@ -188,4 +190,33 @@ void FileManager::setCurrentTokenPosition(int pos) {
 }
 int FileManager::getCurrentLineIndex() {
 	return currentLineIndex;
+}
+string FileManager::getLineAtIndex(int index) {
+	if (currentMode == MODE_READ && index > 1) {
+	setLineIndex(index - 1);
+	return nextLine();
+	}
+	else if (index = 1) {
+		return getFirstLine();
+	}
+	else {
+		cout << "Attempting to read while in write mode" << endl;
+	}
+	
+}
+string FileManager::getPreviousLine() {
+	if (currentMode != MODE_READ) {
+		cout << "Attempting to read while in write mode" << endl;
+	}
+	else if (currentLineIndex > 1) {
+		return getLineAtIndex(currentLineIndex -1);
+	} else {
+		return getLineAtIndex(1);
+	}
+}
+string FileManager::getFirstLine() {
+	file.clear();
+	file.close();
+	file.open(filename, ios::out | ios::in | ios::app);
+	return nextLine();
 }
