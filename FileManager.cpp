@@ -1,6 +1,12 @@
 #include "FileManager.h"
 
 
+
+
+////////////////////////////////////////////////////////
+// CONSTRUCTORS
+////////////////////////////////////////////////////////
+
 FileManager::FileManager(string filename, string delim) {
 	file.open(filename, ios::out | ios::in | ios::app);
 	tokenizer.setDelimiter(delim);
@@ -14,6 +20,51 @@ FileManager::~FileManager() {
 	file.close();
 }
 
+//////////////////////////////////////////////////
+// PUBLIC METHODS 
+//////////////////////////////////////////////////
+
+/* TOKEN METHODS */
+
+string FileManager::nextToken() {
+	return tokenizer.nextToken();
+}
+string FileManager::previousToken() {
+	return tokenizer.prevToken();
+}
+string FileManager::currentToken() {
+	return tokenizer.currToken();
+}
+
+
+void FileManager::appendToken(string token) {
+	file.clear();
+	if (tokensOnLine > 0)
+	{
+		append(delimiter);
+	}
+	append(token);
+	tokensOnLine++;
+	file.clear();
+}
+void FileManager::appendTokens(vector<string> tokens) {
+	for (string s : tokens)
+	{
+		appendToken(s);
+	}
+}
+void FileManager::setCurrentTokenPosition(int pos) {
+	tokenizer.setcurrPos(pos);
+}
+void FileManager::setDelimiter(string delim) {
+	delimiter = delim;
+}
+
+/********************************************************/
+
+
+/* Line Methods */
+
  int FileManager::countLines() {
  	int count = 0;
  	while(!endOfFile()) {
@@ -22,6 +73,119 @@ FileManager::~FileManager() {
  	}
  	return count;
  }
+
+ int FileManager::getCurrentLineIndex() {
+	return currentLineIndex;
+}
+
+
+string FileManager::getLineAtIndex(int index) {
+	if (currentMode == MODE_READ && index > 1) {
+	setLineIndex(index - 1);
+	return nextLine();
+	}
+	else if (index = 1) {
+		return getFirstLine();
+	}
+	else {
+		cout << "Attempting to read while in write mode" << endl;
+	}
+}
+string FileManager::getPreviousLine() {
+	if (currentMode != MODE_READ) {
+		cout << "Attempting to read while in write mode" << endl;
+	}
+	else if (currentLineIndex > 1) {
+		return getLineAtIndex(currentLineIndex -1);
+	} else {
+		return getLineAtIndex(1);
+	}
+}
+string FileManager::nextLine() {
+	if (currentMode == MODE_READ) {
+		string line;
+		getline(file, line);
+		tokenizer.setString(line);
+		currentln = line;
+		currentLineIndex++;
+		return line;
+	}
+	else
+	{
+		cout << "Attempting to read while in write mode" << endl;
+		return "";
+	}
+}
+string FileManager::currentLine() {
+	if(currentMode == MODE_READ) {
+		if(currentLine() == "") {
+			nextLine();
+		}
+		return currentln;
+	} else {
+		cout << "Attempting to read while in write mode" << endl;
+	}
+}
+
+
+void FileManager::setMode(int mode) {
+	if (mode != currentMode) {
+		file.clear();
+		file.close();
+		file.open(filename, ios::app | (mode == MODE_WRITE ? ios::out : ios::in));
+	}
+	currentMode = mode;
+}
+void FileManager::appendLine(string line) {
+	append(line);
+	newLine();
+}
+void FileManager::write(string stringToWrite) {
+	erase();
+	append(stringToWrite);
+}
+void FileManager::writeln(string lineToWrite) {
+	if (currentMode == MODE_WRITE) {
+		append(lineToWrite);
+		newLine();
+	}
+}
+void FileManager::newLine() {
+	append("\n");
+	tokensOnLine = 0;
+	currentLineIndex++;
+}
+void FileManager::erase() {
+	if (currentMode == MODE_WRITE) {
+		file.close();
+	file.open(filename, std::fstream::out | std::fstream::trunc);
+	file.close();
+	} else {
+		cout << "Attempting to write while in read mode" << endl;
+	}
+}
+void FileManager::setLineIndex(int index) {
+	file.clear();
+	file.close();
+	file.open(filename, ios::out | ios::in | ios::app);
+	int lineCounter = 1;
+	while(hasMoreLines()) {
+		nextLine();
+		
+		if (lineCounter == index) {
+			break;
+		}
+		lineCounter++;
+		
+	}
+	currentLineIndex = index;
+}
+
+
+
+
+
+
  bool FileManager::hasMoreLines() {
  	if(endOfFile()){
  		return false;
@@ -33,15 +197,9 @@ FileManager::~FileManager() {
  	
 
 
-string FileManager::nextToken() {
-	return tokenizer.nextToken();
-}
-string FileManager::currentToken() {
-	return tokenizer.currToken();
-}
-string FileManager::previousToken() {
-	return tokenizer.prevToken();
-}
+
+
+
 bool FileManager::beginningOfLine() {
 	if(tokenizer.getCurrentMode() == 1) {
 		if(tokenizer.nextToken() == "") {
@@ -60,43 +218,11 @@ bool FileManager::beginningOfLine() {
 	}
 }
 
-string FileManager::nextLine() {
-	if (currentMode == MODE_READ) {
-		string line;
-		getline(file, line);
-		tokenizer.setString(line);
-		currentln = line;
-		currentLineIndex++;
-		return line;
-	}
-	else
-	{
-		cout << "Attempting to read while in write mode" << endl;
-		return "";
-	}
-}
-
-void FileManager::setMode(int mode) {
-	if (mode != currentMode) {
-		file.clear();
-		file.close();
-		file.open(filename, ios::app | (mode == MODE_WRITE ? ios::out : ios::in));
-	}
-	currentMode = mode;
-}
-
-void FileManager::write(string stringToWrite) {
-	erase();
-	append(stringToWrite);
 
 
-}
-void FileManager::writeln(string lineToWrite) {
-	if (currentMode == MODE_WRITE) {
-		append(lineToWrite);
-		newLine();
-	}
-}
+
+
+
 
 
 void FileManager::append(string toAppend) {
@@ -109,58 +235,17 @@ void FileManager::append(string toAppend) {
 	}
 }
 	
-void FileManager::appendLine(string line) {
-	append(line);
-	newLine();
-}
-void FileManager::setDelimiter(string delim) {
-	delimiter = delim;
-}
 
-void FileManager::appendToken(string token) {
-	file.clear();
-	if (tokensOnLine > 0)
-	{
-		append(delimiter);
-	}
-	append(token);
-	tokensOnLine++;
-	file.clear();
-}
 
-void FileManager::appendTokens(vector<string> tokens) {
-	for (string s : tokens)
-	{
-		appendToken(s);
-	}
-}
 
-void FileManager::newLine() {
-	append("\n");
-	tokensOnLine = 0;
-	currentLineIndex++;
-}
 
-void FileManager::erase() {
-	if (currentMode == MODE_WRITE) {
-		file.close();
-	file.open(filename, std::fstream::out | std::fstream::trunc);
-	file.close();
-	} else {
-		cout << "Attempting to write while in read mode" << endl;
-	}
-}
-string FileManager::currentLine() {
-	if(currentMode == MODE_READ) {
-		if(currentLine() == "") {
-			nextLine();
-		}
-		return currentln;
-	} else {
-		cout << "Attempting to read while in write mode" << endl;
-	}
-	
-}
+
+
+
+
+
+
+
 
 bool FileManager::endOfLine() {
 	return !tokenizer.hasMoreTokens();
@@ -169,54 +254,15 @@ bool FileManager::endOfLine() {
 bool FileManager::endOfFile() {
 	return file.eof();
 }
-void FileManager::setLineIndex(int index) {
-	file.clear();
-	file.close();
-	file.open(filename, ios::out | ios::in | ios::app);
-	int lineCounter = 1;
-	while(hasMoreLines()) {
-		nextLine();
-		lineCounter++;
-		if (lineCounter == index) {
-			break;
-		}
-		
-	}
-	currentLineIndex = index;
 
-}
-void FileManager::setCurrentTokenPosition(int pos) {
-	tokenizer.setcurrPos(pos);
-}
-int FileManager::getCurrentLineIndex() {
-	return currentLineIndex;
-}
-string FileManager::getLineAtIndex(int index) {
-	if (currentMode == MODE_READ && index > 1) {
-	setLineIndex(index - 1);
-	return nextLine();
-	}
-	else if (index = 1) {
-		return getFirstLine();
-	}
-	else {
-		cout << "Attempting to read while in write mode" << endl;
-	}
-	
-}
-string FileManager::getPreviousLine() {
-	if (currentMode != MODE_READ) {
-		cout << "Attempting to read while in write mode" << endl;
-	}
-	else if (currentLineIndex > 1) {
-		return getLineAtIndex(currentLineIndex -1);
-	} else {
-		return getLineAtIndex(1);
-	}
-}
+
+
+
+
 string FileManager::getFirstLine() {
 	file.clear();
 	file.close();
 	file.open(filename, ios::out | ios::in | ios::app);
 	return nextLine();
 }
+
