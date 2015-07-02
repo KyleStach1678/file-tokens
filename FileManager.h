@@ -48,6 +48,7 @@ public:
 	void appendTokens(vector<string> tokens);
 	void setCurrentTokenPosition(int pos);
 	void setDelimiter(string delimiter);
+	void setTokenMode(int mode);
 
 	/****************************************/
 
@@ -114,7 +115,7 @@ private:
 	string currentln = "";
 	string filename;
 	string delimiter;
-	
+
 };
 
 #endif

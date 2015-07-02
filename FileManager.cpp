@@ -1,7 +1,14 @@
+
+/*****************************************************************************
+* 								FileManager.cpp
+* 								===============
+*
+* AUTHORS: Kyle Stachowicz, Samuel Resendez, Sam Chung
+* CREATED: 01-07-2015
+*******************************************************************************/
+
+////////////////////////////
 #include "FileManager.h"
-
-
-
 
 ////////////////////////////////////////////////////////
 // CONSTRUCTORS
@@ -58,6 +65,9 @@ void FileManager::setCurrentTokenPosition(int pos) {
 }
 void FileManager::setDelimiter(string delim) {
 	delimiter = delim;
+}
+void FileManager::setTokenMode(int mode) {
+	tokenizer.setMode(mode);
 }
 
 /********************************************************/
@@ -183,23 +193,14 @@ void FileManager::setLineIndex(int index) {
 
 
 
-
-
-
  bool FileManager::hasMoreLines() {
- 	if(endOfFile()){
+ 	if(endOfFile()) {
  		return false;
- 	}else{
+ 	}
+ 	else {
  		return true;
  	}
-
  }
- 	
-
-
-
-
-
 bool FileManager::beginningOfLine() {
 	if(tokenizer.getCurrentMode() == 1) {
 		if(tokenizer.nextToken() == "") {
@@ -217,14 +218,27 @@ bool FileManager::beginningOfLine() {
 		}
 	}
 }
+bool FileManager::endOfLine() {
+	return !tokenizer.hasMoreTokens();
+}
+bool FileManager::endOfFile() {
+	return file.eof();
+}
+
+/*********************************************************/
 
 
 
+////////////////////////////////////////////////////////
+/// PRIVATE METHODS
+////////////////////////////////////////////////////////
 
-
-
-
-
+string FileManager::getFirstLine() {
+	file.clear();
+	file.close();
+	file.open(filename, ios::out | ios::in | ios::app);
+	return nextLine();
+}
 void FileManager::append(string toAppend) {
 	if (currentMode == MODE_WRITE) {
 		file << toAppend;	
@@ -234,35 +248,3 @@ void FileManager::append(string toAppend) {
 		cout << "Attempting to append while in read mode" << endl;
 	}
 }
-	
-
-
-
-
-
-
-
-
-
-
-
-
-bool FileManager::endOfLine() {
-	return !tokenizer.hasMoreTokens();
-}
-
-bool FileManager::endOfFile() {
-	return file.eof();
-}
-
-
-
-
-
-string FileManager::getFirstLine() {
-	file.clear();
-	file.close();
-	file.open(filename, ios::out | ios::in | ios::app);
-	return nextLine();
-}
-
