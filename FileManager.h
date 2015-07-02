@@ -1,7 +1,7 @@
 
 /*****************************************************************************
 * 								FileManager.h
-* 								=============
+* 							   ===============
 *
 * AUTHORS: Kyle Stachowicz, Samuel Resendez, Sam Chung
 * CREATED: 01-07-2015
@@ -88,7 +88,21 @@ public:
 
 private:
 
+
+	/////////////
+	// Methods //
+	/////////////
+
+	string getFirstLine();
+	void append(string toAppend);
+
+	/*********************/
 	
+
+	//////////////////////////
+	// Properties/Variables //
+	//////////////////////////
+
 	int tokensOnLine;
 	int currentMode;
 	int currentLineIndex = 1;
@@ -97,14 +111,9 @@ private:
 
 	Tokenizer tokenizer;
 
-	string getFirstLine();
-	void append(string toAppend);
-
-
 	string currentln = "";
 	string filename;
 	string delimiter;
-
 	
 };
 
