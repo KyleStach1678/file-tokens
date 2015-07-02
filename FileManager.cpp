@@ -152,7 +152,7 @@ void FileManager::appendLine(string line) {
 }
 void FileManager::write(string stringToWrite) {
 	erase();
-	append(stringToWrite);
+	writeln(stringToWrite);
 }
 void FileManager::writeln(string lineToWrite) {
 	if (currentMode == MODE_WRITE) {
@@ -190,7 +190,6 @@ void FileManager::setLineIndex(int index) {
 	}
 	currentLineIndex = index;
 }
-
 
 
  bool FileManager::hasMoreLines() {

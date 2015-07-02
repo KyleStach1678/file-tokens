@@ -48,7 +48,7 @@ public:
 	void appendTokens(vector<string> tokens);
 	void setCurrentTokenPosition(int pos);
 	void setDelimiter(string delimiter);
-	void setTokenMode(int mode);
+	void setTokenMode(int mode); //Set zero to read left to right, and one to read right to left
 
 	/****************************************/
 
@@ -56,13 +56,10 @@ public:
 	//Line Methods/////
 	///////////////////
 
-	//Lines are 1-indexed(i.e. The first line is at index 1);
-	 int getCurrentLineIndex();
+	 int getCurrentLineIndex(); //Lines are 1-indexed(i.e. The first line is at index 1);
 	 int countLines();
 
-
-	//Sets your cursor at the beginning of the line
-	string getLineAtIndex(int index);
+	string getLineAtIndex(int index); //Sets your cursor at the beginning of the line
 	string getPreviousLine();
 	string nextLine();
 	string currentLine();
